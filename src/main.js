@@ -11,7 +11,7 @@ const routes = [
   { path : '/configuration', name : 'configuration', component : () => import('@/views/Configuration.vue')  },
   { path : '/report', name : 'report', component : () => import('@/views/Report.vue')  },
   { path : '/guide', name : 'guide', component : () => import('@/views/Guide.vue')  },
- 
+  { path: "/:pathMatch(.*)*", component : () => import('@/views/NotFound.vue') }
 ]
 
 const router = createRouter({
@@ -20,6 +20,8 @@ const router = createRouter({
   history: createWebHistory(),
 
 })
+
+
 
 
 createApp(App).use(router).mount('#app')
