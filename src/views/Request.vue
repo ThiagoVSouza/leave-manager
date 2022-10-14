@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <p>Footer</p>
+  <p>Request</p>
 </template>
 
 <style scoped>
