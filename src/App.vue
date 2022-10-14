@@ -12,7 +12,7 @@ import Footer from '@/components/Footer.vue'
   <div class="flex flex-col h-screen w-screen">
 
     <Header></Header>
-    <div class="flex-grow border-2 border-blue-700">
+    <div class="flex-grow">
       <router-view/>
     </div>
     <Footer></Footer>
