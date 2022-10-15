@@ -18,10 +18,10 @@ export default {
 </script>
 
 <template>
-  <div class="bg-blue-500 p-4 text-slate-100 text-center flex flex-row items-center justify-center">
+  <div class="bg-blue-500 dark:bg-[#09192f] p-4 text-slate-100 dark:text-[#8fadd9] text-center flex flex-row items-center justify-center">
     <div class="flex-grow md:block flex">
 
-      <button @click="nav('')" class="m-auto md:m-0 rounded-lg p-1 px-4 gap-2 font-bold text-3xl hover:bg-blue-700 transition-colors  flex flex-col items-center justify-center text-slate-100 "><i>Leave Manager</i></button>
+      <button @click="nav('')" class="m-auto md:m-0 rounded-lg p-1 px-4 gap-2 font-bold text-3xl dark:hover:bg-[#172a46] hover:bg-blue-700 transition-colors  flex flex-col items-center justify-center text-slate-100 dark:text-[#8fadd9]"><i>Leave Manager</i></button>
     
     </div>
     <div class="hidden md:block">
