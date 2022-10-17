@@ -1,4 +1,55 @@
-<script setup>
+<script >
+
+
+import api from '@/services/api';
+
+export default {
+
+    data(){
+
+        return {
+
+            loading : 1,
+            types : [],
+            employees : [],
+            message : "",
+            message_title : "",
+            requests: [],
+            search_name: "",
+            
+
+        }
+
+    },
+    methods: {
+
+        loadpage() {
+        
+            api.get("/stats").then((response)=>{ console.log(response.data); this.employees = response.data.employees; this.types = response.data.types; this.loading = 3;  });
+
+        },
+               
+        
+        get_value(id){
+
+            return document.getElementById(id).value;
+
+        }
+
+    },
+    mounted() {
+
+        console.log("Mounted!");
+
+        this.loadpage();
+
+    }
+
+}
+
+
+
+
 
 </script>
 
@@ -13,7 +64,43 @@
 </div>
 <div class="relative w-full h-full flex-grow">
 
-<div class="absolute bg-slate-100 dark:bg-slate-800 h-full w-full overflow-y-auto overflow-x-hidden">
+
+    <div v-if="loading === 1" class="absolute bg-slate-100 dark:bg-slate-800 h-full w-full flex justify-center items-center overflow-y-auto overflow-x-hidden">
+        
+        <img src="images/loader.svg" class="w-14 h-14" />
+
+
+    </div>
+    <div v-else-if="loading === 2" class="absolute bg-slate-100 dark:bg-slate-800 h-full w-full flex justify-center items-center overflow-y-auto overflow-x-hidden">
+        
+        <div class="w-full md:w-96 bg-white dark:bg-[#172a46] border-gray-200  shadow sm:rounded-lg">
+
+            <div class="w-full p-4 pb-8">
+
+                <div class="w-full p-2 flex justify-center text-lg">
+
+                <p><b>{{this.message_title}}</b></p>
+
+                </div>
+                <div class="w-full p-6 pb-8 flex justify-center">
+
+                    <p>{{this.message}}</p>
+
+                </div>
+                <div class="w-full pt-1 flex justify-center">
+
+                    <button @click="this.loadpage();" class="h-10 w-20 text-white rounded-lg dark:bg-slate-500 dark:hover:bg-slate-700 bg-red-500 hover:bg-red-600 outline-offset-2 transition-colors">Ok</button>
+                                
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<div v-else class="absolute bg-slate-100 dark:bg-slate-800 h-full w-full overflow-y-auto overflow-x-hidden">
 
   <div class=" max-w-4xl m-auto w-full text-slate-700 dark:text-slate-400">
 
@@ -21,7 +108,7 @@
     <div class="flex flex-col md:flex-row p-2 pt-8 "> 
         <div class="flex justify-center items-center">
 
-          <p class="text-xl p-2 font-bold">Statistics per employees</p>
+          <p class="text-xl p-2 font-bold">Requests per employees</p>
 
         </div>
         <div class="flex-grow  flex justify-end">
@@ -51,14 +138,14 @@
                         </thead>
 
                         <tbody class="bg-white dark:bg-[#172a46]">
-                            <tr>
+                            <tr  v-for="employees in employees" :key="employees.id">
                                
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 dark:border-slate-700">
-                                    <div class="text-sm leading-5 text-gray-500 dark:text-slate-400">john@example.com</div>
+                                    <div class="text-sm leading-5 text-gray-500 dark:text-slate-400">{{employees.name}}</div>
                                 </td>
 
                                 <td class="px-6 py-4  whitespace-no-wrap border-b border-gray-200 dark:border-slate-700">
-                                    0
+                                    {{employees.qty}}
                                 </td>
                                 
                             </tr>
@@ -72,7 +159,7 @@
     <div class="flex flex-col md:flex-row p-2 pt-8 "> 
         <div class="flex justify-center items-center">
 
-          <p class="text-xl p-2 font-bold">Statistics per types of leave</p>
+          <p class="text-xl p-2 font-bold">Requests per type of leave</p>
 
         </div>
         <div class="flex-grow  flex justify-end">
@@ -102,14 +189,14 @@
                         </thead>
 
                         <tbody class="bg-white dark:bg-[#172a46]">
-                            <tr>
+                            <tr v-for="types in types" :key="types.id">
                                
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 dark:border-slate-700">
-                                    <div class="text-sm leading-5 text-gray-500 dark:text-slate-400">john@example.com</div>
+                                    <div class="text-sm leading-5 text-gray-500 dark:text-slate-400">{{types.name}}</div>
                                 </td>
 
                                 <td class="px-6 py-4  whitespace-no-wrap border-b border-gray-200 dark:border-slate-700">
-                                    0
+                                    {{types.qty}}
                                 </td>
                                 
                             </tr>

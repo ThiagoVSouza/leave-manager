@@ -1,4 +1,93 @@
-<script setup>
+<script>
+
+
+import api from '@/services/api';
+
+export default {
+
+    data(){
+
+        return {
+
+            loading : 1,
+            types : [],
+            employees : [],
+            message : "",
+            message_title : "",
+            
+
+        }
+
+    },
+    methods: {
+
+        loadpage() {
+        
+            api.get("/configuration").then((response)=>{ console.log(response.data); this.employees = response.data.employees;this.types = response.data.types; console.log(response.data.employees); this.loading = 3;  });
+
+        },
+        add_request(){
+
+            api.put("/request", { 
+              
+                "employee" : this.get_value("employee"),   
+                "type" : this.get_value("type")  , 
+                "day" : this.get_value("day") ,  
+                "month" : this.get_value("month") ,  
+                "year" : this.get_value("year") ,  
+                "note" : this.get_value("note") ,  
+              
+              
+                }).then(
+                
+                (response)=>{ 
+                    
+                    console.log("Insert Type:",response.data); 
+                    console.log("Types:",response.data.types); 
+
+                    if(response.data.error == "true"){
+
+                        this.message_title = "Error";
+                        this.message = response.data.error_message;
+
+                    }else{
+
+                        this.employees = response.data.employees;
+                        this.types = response.data.types;
+
+                        this.message_title = "Message";
+                        this.message = "Request added sucecessfully!";
+
+                    }
+                    
+                    this.loading = 2 ; 
+                    
+
+                });
+
+            this.loading = 1;  
+
+        },
+        
+        get_value(id){
+
+            return document.getElementById(id).value;
+
+        }
+
+    },
+    mounted() {
+
+        console.log("Mounted!");
+
+        this.loadpage();
+
+    }
+
+}
+
+
+
 
 </script>
 
@@ -11,8 +100,42 @@
 
 </div>
 <div class="relative w-full h-full flex-grow">
+  <div v-if="loading === 1" class="absolute bg-slate-100 dark:bg-slate-800 h-full w-full flex justify-center items-center overflow-y-auto overflow-x-hidden">
+        
+        <img src="images/loader.svg" class="w-14 h-14" />
 
-<div class="absolute bg-slate-100 dark:bg-slate-800 h-full w-full overflow-y-auto overflow-x-hidden flex justify-center items-start md:items-center ">
+
+    </div>
+    <div v-else-if="loading === 2" class="absolute bg-slate-100 dark:bg-slate-800 h-full w-full flex justify-center items-center overflow-y-auto overflow-x-hidden">
+        
+        <div class="w-full md:w-96 bg-white dark:bg-[#172a46] border-gray-200  shadow sm:rounded-lg">
+
+            <div class="w-full p-4 pb-8">
+
+                <div class="w-full p-2 flex justify-center text-lg">
+
+                <p><b>{{this.message_title}}</b></p>
+
+                </div>
+                <div class="w-full p-6 pb-8 flex justify-center">
+
+                    <p>{{this.message}}</p>
+
+                </div>
+                <div class="w-full pt-1 flex justify-center">
+
+                    <button @click="this.loadpage();" class="h-10 w-20 text-white rounded-lg dark:bg-slate-500 dark:hover:bg-slate-700 bg-red-500 hover:bg-red-600 outline-offset-2 transition-colors">Ok</button>
+                                
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<div v-else class="absolute bg-slate-100 dark:bg-slate-800 h-full w-full overflow-y-auto overflow-x-hidden flex justify-center items-start md:items-center ">
 
   <div class="w-full md:w-96 bg-white dark:bg-[#172a46] border-gray-200  shadow sm:rounded-lg">
 
@@ -20,22 +143,19 @@
 
           
             <label for="type" class="block p-2 text-base font-medium text-gray-700 dark:text-slate-400  ">Employee</label>
-            <select id="type" name="type" autocomplete="type-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-slate-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
-              <option>United States</option>
-              <option>Canada</option>
-              <option>Mexico</option>
+            <select  id="employee" name="type" autocomplete="type-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-slate-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
+              <option v-for="employees in employees" :key="employees.id" :value="employees.id">{{employees.name}}</option>
+              
             </select>
 
             <label for="type" class="block p-2 text-base font-medium text-gray-700 dark:text-slate-400  ">Type of Leave</label>
             <select id="type" name="type" autocomplete="type-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-slate-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
-              <option>United States</option>
-              <option>Canada</option>
-              <option>Mexico</option>
-            </select>
+              <option v-for="types in types" :key="types.id" :value="types.id">{{types.name}}</option>
+             </select>
 
             <label for="type" class="block p-2 text-base font-medium text-gray-700 dark:text-slate-400  ">Date</label>
             <div class="w-full flex flex-row">
-                <select id="type" name="type" autocomplete="type-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-slate-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <select id="day" name="type" autocomplete="type-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-slate-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option>01</option>
                   <option>02</option>
                   <option>03</option>
@@ -68,7 +188,7 @@
                   <option>30</option>
                   <option>31</option>
                 </select>
-                <select id="type" name="type" autocomplete="type-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-slate-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <select id="month" name="type" autocomplete="type-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-slate-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option>Jan</option>
                   <option>Feb</option>
                   <option>Mar</option>
@@ -82,7 +202,7 @@
                   <option>Nov</option>
                   <option>Dec</option>
                 </select>
-                <select id="type" name="type" autocomplete="type-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-r-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-slate-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <select id="year" name="type" autocomplete="type-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-r-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-slate-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option>2022</option>
                   <option>2023</option>
                   <option>2024</option>
@@ -94,11 +214,11 @@
             </div>
 
             <label for="type" class="block p-2 text-base font-medium text-gray-700 dark:text-slate-400 ">Note</label>
-            <textarea id="type" name="type" autocomplete="type-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-slate-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+            <textarea id="note" name="type" autocomplete="type-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-slate-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
 
             <div class="w-full pt-2 flex justify-end">
 
-              <button class="h-10 w-20 text-white rounded-lg dark:bg-slate-500 dark:hover:bg-slate-700 bg-red-500 hover:bg-red-600 outline-offset-2 transition-colors">Request</button>
+              <button @click="add_request()" class="h-10 w-20 text-white rounded-lg dark:bg-slate-500 dark:hover:bg-slate-700 bg-red-500 hover:bg-red-600 outline-offset-2 transition-colors">Request</button>
                             
 
             </div>
